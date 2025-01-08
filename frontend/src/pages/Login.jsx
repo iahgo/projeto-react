@@ -50,10 +50,6 @@ class Login extends Component {
     }
   };
 
-  handleLogout = () => {
-    localStorage.removeItem('token');
-    this.props.history.push('/login');
-  };
 
   render() {
     const { email, password, isDisabled, error } = this.state;
@@ -89,9 +85,6 @@ class Login extends Component {
           </button>
         </form>
         { error && <p>{ error }</p> }
-        <button onClick={ this.handleLogout } className={ classButton }>
-          Logout
-        </button>
       </div>
     );
   }
