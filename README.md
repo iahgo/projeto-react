@@ -37,6 +37,12 @@ mvn clean install -Dmaven.test.skip
 mvn spring-boot:run
 ```
 
+```bash
+cd frontend
+yarn install
+npm start
+```
+
 ### 3. **Rodando com Docker**
 ```bash
 docker run -p 8080:8080 leogloriainfnet/cars:tagname
