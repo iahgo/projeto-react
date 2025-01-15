@@ -2,6 +2,7 @@ import React, { Component } from 'react';
 import { withRouter } from 'react-router-dom';
 import { connect } from 'react-redux';
 import { saveEmail } from '../redux/actions/user';
+import './Login.css'; // Importar o arquivo CSS
 
 class Login extends Component {
   state = {
@@ -27,7 +28,7 @@ class Login extends Component {
     const { history, dispatchSaveEmail } = this.props;
 
     try {
-      const BASE_URL = 'api/usuarios';
+      const BASE_URL = 'https://trabalho-final-react-noite-9088f5955205.herokuapp.com/api/usuarios';
       const response = await fetch(`${BASE_URL}/login`, {
         method: 'POST',
         headers: {
@@ -50,41 +51,32 @@ class Login extends Component {
     }
   };
 
-
   render() {
     const { email, password, isDisabled, error } = this.state;
-    const classButton = 'p-2 bg-blue-500 text-white';
 
     return (
-      <div>
-        <form onSubmit={ this.handleSubmit }>
+      <div className="login-container">
+        <form className="login-form" onSubmit={this.handleSubmit}>
+          <h2>Login</h2>
           <input
-            data-testid="email-input"
-            placeholder="Email"
-            type="text"
+            type="email"
             name="email"
-            value={ email }
-            onChange={ this.handleChange }
-            className="p-1 border"
+            value={email}
+            onChange={this.handleChange}
+            placeholder="Email"
           />
           <input
-            data-testid="password-input"
-            placeholder="Senha"
             type="password"
             name="password"
-            value={ password }
-            onChange={ this.handleChange }
-            className="p-1 border"
+            value={password}
+            onChange={this.handleChange}
+            placeholder="Password"
           />
-          <button
-            type="submit"
-            disabled={ isDisabled }
-            className={ classButton }
-          >
-            Entrar
+          <button type="submit" disabled={isDisabled}>
+            Login
           </button>
+          {error && <p className="error">{error}</p>}
         </form>
-        { error && <p>{ error }</p> }
       </div>
     );
   }

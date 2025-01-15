@@ -1,4 +1,4 @@
-const BASE_URL = '/api/usuarios';
+const BASE_URL = 'https://trabalho-final-react-noite-9088f5955205.herokuapp.com/api/usuarios';
 
 export const loginUser = async (email, password) => {
   try {
@@ -30,6 +30,19 @@ export const getAllUsers = async () => {
       throw new Error('Erro ao obter todos os usuários');
     }
     return await response.json();
+  } catch (error) {
+    throw error;
+  }
+}
+
+export const getUserByEmail = async (email) => {
+  try {
+    const users = await getAllUsers();
+    const user = users.find(user => user.email === email);
+    if (!user) {
+      throw new Error('Usuário não encontrado');
+    }
+    return user;
   } catch (error) {
     throw error;
   }

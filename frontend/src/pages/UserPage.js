@@ -9,10 +9,20 @@ const UserPage = () => {
     history.push('/cars');
   };
 
+  const handleLogout = () => {
+    localStorage.removeItem('token');
+    history.push('/login');
+  };
+
+  const classButton = 'p-2 bg-blue-500 text-white';
+
   return (
-    <div>
-      <button onClick={handleNavigateToCars} style={{ position: 'absolute', top: 10, right: 10 }}>
+    <div style={{ paddingTop: '60px' }}>
+      <button onClick={handleNavigateToCars}>
         Ver Carros
+      </button>
+      <button onClick={handleLogout}>
+        Logout
       </button>
       <UserList />
     </div>

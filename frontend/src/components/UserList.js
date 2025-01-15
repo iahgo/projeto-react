@@ -1,17 +1,28 @@
-import React, { useEffect, useState } from 'react';
-import { getAllUsers } from '../domain/users/userService';
+import React, { useState, useEffect } from 'react';
+import {jwtDecode} from 'jwt-decode';
+import {getAllUsers, getUserByEmail} from '../domain/users/userService'
+import './userList.css';
+
 
 const UserList = () => {
   const [users, setUsers] = useState([]);
+  const [user, setUser] = useState(null);
+  const [showUsers, setShowUsers] = useState(false);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
-  const [showUsers, setShowUsers] = useState(false);
 
   useEffect(() => {
     const fetchUsers = async () => {
       try {
-        const data = await getAllUsers();
-        setUsers(data);
+        const token = localStorage.getItem('token');
+        const decodedToken = jwtDecode(token);
+        const email = decodedToken.email;
+
+        const response = await getUserByEmail(email);
+        setUser(response);
+        
+        const responseUsers = await getAllUsers();
+        setUsers(responseUsers);
       } catch (error) {
         setError(error);
       } finally {
@@ -35,20 +46,28 @@ const UserList = () => {
   }
 
   return (
-    <div>
-      <h1>Lista de Usuários</h1>
+    <div className="container">
+      <h1>Meu Perfil</h1>
+      {user && (
+        <div className="profile">
+          <img src={user.avatar} alt="Avatar" />
+          <p>Nome: {user.nome}</p>
+          <p>Email: {user.email}</p>
+          <p>Cargo: {user.cargo}</p>
+          <p>ID: {user.id}</p>
+        </div>
+      )}
       <button onClick={handleToggleUsers}>
         {showUsers ? 'Esconder usuários' : 'Ver usuários'}
       </button>
-      {showUsers && (
-        <ul>
-          {users.map(user => (
-            <li key={user.id}>{user.nome}</li>
-          ))}
-        </ul>
-      )}
+        {showUsers && (
+          <ul>
+            {users.map(user => (
+              <li key={user.id}>{user.nome}</li>
+            ))}
+          </ul>
+        )}
     </div>
   );
 };
-
 export default UserList;

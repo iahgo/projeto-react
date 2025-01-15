@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { getAllCars, getCarById, createCar, updateCar, deleteCar } from '../domain/cars/carService';
+import { getAllCars, getCarById, createCar, updateCar, deleteCar, exportarCarros } from '../domain/cars/carService';
 import EditCarModal from '../domain/cars/EditCarModal';
 import CarDetailPopup from './CarDetailPopup';
 import CarDetail from '../domain/cars/CarDetail';
@@ -18,6 +18,8 @@ const CarComponent = () => {
   const [errorMessage, setErrorMessage] = useState('');
   const [carDetails, setCarDetails] = useState(null);
   const [isPopupOpen, setIsPopupOpen] = useState(false);
+  const [currentPage, setCurrentPage] = useState(1);
+  const itemsPerPage = 10;
 
   const fetchCars = async () => {
     try {
@@ -90,14 +92,42 @@ const CarComponent = () => {
     }
   };
 
+  const handleExport = async () => {
+    try {
+      await exportarCarros();
+    } catch (error) {
+      console.error("Erro ao exportar carros:", error);
+    }
+  }
+
+
   const closePopup = () => {
     setIsPopupOpen(false);
     setCarDetails(null);
   };
 
+  const handlePageChange = (pageNumber) => {
+    setCurrentPage(pageNumber);
+  };
+
+  const indexOfLastCar = currentPage * itemsPerPage;
+  const indexOfFirstCar = indexOfLastCar - itemsPerPage;
+  const currentCars = cars.slice(indexOfFirstCar, indexOfLastCar);
+
+  const renderPageNumbers = () => {
+    const pageNumbers = [];
+    for (let i = 1; i <= Math.ceil(cars.length / itemsPerPage); i++) {
+      pageNumbers.push(i);
+    }
+    return pageNumbers.map(number => (
+      <button key={number} onClick={() => handlePageChange(number)}>
+        {number}
+      </button>
+    ));
+  };
+
   return (
     <div className="car-component">
-      <h1>Cars</h1>
       <h2>Adicionar Novo Carro</h2>
       <form
         onSubmit={(e) => {
@@ -105,57 +135,70 @@ const CarComponent = () => {
           handleCreateCar();
         }}
       >
-              <input
-        type="text"
-        placeholder="Modelo"
-        value={newCar.modelo}
-        onChange={(e) => setNewCar({ ...newCar, modelo: e.target.value })}
-      />
-      <input
-        type="text"
-        placeholder="Fabricante"
-        value={newCar.fabricante}
-        onChange={(e) => setNewCar({ ...newCar, fabricante: e.target.value })}
-      />
-      <input
-        type="number"
-        placeholder="Ano"
-        value={newCar.ano}
-        onChange={(e) => setNewCar({ ...newCar, ano: e.target.value })}
-      />
-      <input
-        type="text"
-        placeholder="Cor"
-        value={newCar.cor}
-        onChange={(e) => setNewCar({ ...newCar, cor: e.target.value })}
-      />
-      <input
-        type="number"
-        placeholder="Cavalos de Potência"
-        value={newCar.cavalosDePotencia}
-        onChange={(e) => setNewCar({ ...newCar, cavalosDePotencia: e.target.value })}
-      />
-      <input
-        type="text"
-        placeholder="País"
-        value={newCar.pais}
-        onChange={(e) => setNewCar({ ...newCar, pais: e.target.value })}
-      />
+        <input
+          type="text"
+          placeholder="Modelo"
+          value={newCar.modelo}
+          onChange={(e) => setNewCar({ ...newCar, modelo: e.target.value })}
+        />
+        <input
+          type="text"
+          placeholder="Fabricante"
+          value={newCar.fabricante}
+          onChange={(e) => setNewCar({ ...newCar, fabricante: e.target.value })}
+        />
+        <input
+          type="number"
+          placeholder="Ano"
+          value={newCar.ano}
+          onChange={(e) => setNewCar({ ...newCar, ano: e.target.value })}
+        />
+        <input
+          type="text"
+          placeholder="Cor"
+          value={newCar.cor}
+          onChange={(e) => setNewCar({ ...newCar, cor: e.target.value })}
+        />
+        <input
+          type="number"
+          placeholder="Cavalos de Potência"
+          value={newCar.cavalosDePotencia}
+          onChange={(e) => setNewCar({ ...newCar, cavalosDePotencia: e.target.value })}
+        />
+        <input
+          type="text"
+          placeholder="País"
+          value={newCar.pais}
+          onChange={(e) => setNewCar({ ...newCar, pais: e.target.value })}
+        />
         <button type="submit">Adicionar</button>
       </form>
+      <h2>Lista Carros</h2>
       {errorMessage && <p className="error-message">{errorMessage}</p>}
       {loading && <div>Loading...</div>}
+      <button
+          className="export-button"
+          color="primary"
+          onClick={handleExport}
+        >
+          Exportar como CSV
+        </button>
       <ul>
-        {cars.map((car) => (
+        {currentCars.map((car) => (
           <li key={car.id}>
             {car.modelo} - {car.fabricante} - {car.ano}
             <br />
+            <div className="button-container">
             <button onClick={() => fetchCarById(car.id)}>Editar</button>
             <button onClick={() => handleDeleteCar(car.id)}>Deletar</button>
             <button onClick={() => handleDetailCar(car.id)}>Detalhar</button>
+            </div>
           </li>
         ))}
       </ul>
+      <div className="pagination">
+        {renderPageNumbers()}
+      </div>
       {isEditModalOpen && (
         <EditCarModal
           car={car}

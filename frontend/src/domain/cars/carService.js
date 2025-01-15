@@ -1,4 +1,4 @@
-const BASE_URL = '/api/carros';
+const BASE_URL = 'https://trabalho-final-react-noite-9088f5955205.herokuapp.com/api/carros';
 
 const handleResponse = async (response) => {
     if (!response.ok) {
@@ -79,4 +79,31 @@ const deleteCar = async (id) => {
     }
   };
 
-export { getAllCars, getCarById, createCar, updateCar, deleteCar };
+  const exportarCarros = async () => {
+    try {
+      const response = await fetch(`${BASE_URL}/export-cars`, {
+        method: 'GET',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+      });
+  
+      if (!response.ok) {
+        throw new Error('Erro ao exportar carros');
+      }
+  
+      const blob = await response.blob();
+      const url = window.URL.createObjectURL(blob);
+      const link = document.createElement('a');
+      link.href = url;
+      link.setAttribute('download', 'carros.csv');
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+    } catch (error) {
+      console.error('Erro ao exportar carros:', error);
+      throw error;
+    }
+  };
+
+export { getAllCars, getCarById, createCar, updateCar, deleteCar, exportarCarros };
