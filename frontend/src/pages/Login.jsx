@@ -28,7 +28,7 @@ class Login extends Component {
     const { history, dispatchSaveEmail } = this.props;
 
     try {
-      const BASE_URL = 'https://trabalho-final-react-noite-9088f5955205.herokuapp.com/api/usuarios';
+      const BASE_URL = 'https://proven-promptly-chipmunk.ngrok-free.app/api/usuarios';
       const response = await fetch(`${BASE_URL}/login`, {
         method: 'POST',
         headers: {
