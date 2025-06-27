@@ -1,12 +1,16 @@
 const BASE_URL = 'https://proven-promptly-chipmunk.ngrok-free.app/api/usuarios';
 
+// Headers padrão para todas as requisições
+const defaultHeaders = {
+  'Content-Type': 'application/json',
+  'ngrok-skip-browser-warning': 'true',
+};
+
 export const loginUser = async (email, password) => {
   try {
     const response = await fetch(`${BASE_URL}/login`, {
       method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
+      headers: defaultHeaders,
       body: JSON.stringify({ email, password }),
     });
     if (!response.ok) {
@@ -22,9 +26,7 @@ export const getAllUsers = async () => {
   try {
     const response = await fetch(BASE_URL, {
       method: 'GET',
-      headers: {
-        'Content-Type': 'application/json',
-      },
+      headers: defaultHeaders,
     });
     if (!response.ok) {
       throw new Error('Erro ao obter todos os usuários');
