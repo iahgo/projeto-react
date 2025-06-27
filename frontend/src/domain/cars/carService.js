@@ -1,4 +1,4 @@
-const BASE_URL = 'https://trabalho-final-react-noite-9088f5955205.herokuapp.com/api/carros';
+const BASE_URL = 'https://proven-promptly-chipmunk.ngrok-free.app/api/carros';
 
 const handleResponse = async (response) => {
     if (!response.ok) {
